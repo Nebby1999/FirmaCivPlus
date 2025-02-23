@@ -52,7 +52,7 @@ minecraft {
     // However, it must be at "META-INF/accesstransformer.cfg" in the final mod jar to be loaded by Forge.
     // This default location is a best practice to automatically put the file in the right place in the final jar.
     // See https://docs.minecraftforge.net/en/latest/advanced/accesstransformers/ for more information.
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -111,35 +111,51 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    // Put repositories for dependencies here
-    // ForgeGradle automatically adds the Forge maven and Maven Central for you
-
-    // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
-    // flatDir {
-    //     dir 'libs'
-    // }
+    exclusiveContent{
+        forRepository{
+            maven {{
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }}
+        }
+        forRepositories(fg.repository) // Only add this if you're using ForgeGradle, otherwise remove this line
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
-    // Specify the version of Minecraft to use.
-    // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
-    // The "userdev" classifier will be requested and setup by ForgeGradle.
-    // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
-    // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
-    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    // JEI
+    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:15.3.0.7"))
+    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.3.0.7"))
+    // at runtime, use the full JEI jar for Forge
+    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge:15.3.0.7"))
 
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
+    // EMI
+    implementation fg.deobf("dev.emi:emi-forge:1.1.13+1.20.1")
 
+    // TFC
+    implementation fg.deobf("maven.modrinth:patchouli:1.20.1-84-forge")
+    implementation fg.deobf("maven.modrinth:terrafirmacraft:3.2.5")
+
+    // Beneath
+    implementation fg.deobf("maven.modrinth:beneath:1.0.1") { transitive = false }
+
+    // FirmaCiv
+    implementation fg.deobf("maven.modrinth:firmaciv:1.0.9");
+    implementation fg.deobf("maven.modrinth:alekiships:1.0.14")
+
+    // ArborFirmaCraft
+    implementation fg.deobf("maven.modrinth:arborfirmacraft-(afc):1.0.13-1.20.1")
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
