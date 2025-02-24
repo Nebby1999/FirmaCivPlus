@@ -35,11 +35,11 @@ public class FirmaCivPlus
             LOGGER.info("Enabling FirmaCiv+ArborFirmaCraft cross compat");
             FirmaCivPlusAFC.init();
         }
-        if(FirmaCivPlusModsResolver.BENEATH.isLoaded())
+        /*if(FirmaCivPlusModsResolver.BENEATH.isLoaded())
         {
             LOGGER.info("Enabling FirmaCiv+Beneath cross compat");
             //FirmaCivPlusBeneath.init();
-        }
+        }*/
 
         FirmaCivPlusBlocks.init(bus);
 
@@ -52,7 +52,14 @@ public class FirmaCivPlus
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-
+        if(FirmaCivPlusModsResolver.ARBOR_FIRMA_CRAFT.isLoaded())
+        {
+            FirmaCivPlusAFC.commonSetup();
+        }
+        if(FirmaCivPlusModsResolver.BENEATH.isLoaded())
+        {
+            //FirmaCivPlusBeneath.commonSetup();
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

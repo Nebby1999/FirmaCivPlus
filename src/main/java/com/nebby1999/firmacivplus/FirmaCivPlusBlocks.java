@@ -18,11 +18,23 @@ public class FirmaCivPlusBlocks
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, FirmaCivPlus.MOD_ID);
 
 
-    private static final Map<WatercraftMaterial, RegistryObject<CanoeComponentBlock>> _CANOE_COMPONENT_BLOCKS = new HashMap<WatercraftMaterial, RegistryObject<CanoeComponentBlock>>();
+    private static final Map<WatercraftMaterial, RegistryObject<CanoeComponentBlock>> _CANOE_COMPONENT_BLOCKS = new HashMap<>();
+    public static RegistryObject<CanoeComponentBlock> getCanoeComponentBlock(WatercraftMaterial material)
+    {
+        return _CANOE_COMPONENT_BLOCKS.get(material);
+    }
 
-    private static final Map<WatercraftMaterial, RegistryObject<FirmacivAngledWoodenBoatFrameBlock>> _WOODEN_BOAT_FRAME_ANGLED = new HashMap<WatercraftMaterial, RegistryObject<FirmacivAngledWoodenBoatFrameBlock>>();
+    private static final Map<WatercraftMaterial, RegistryObject<FirmacivAngledWoodenBoatFrameBlock>> _WOODEN_BOAT_FRAME_ANGLED = new HashMap<>();
+    public static RegistryObject<FirmacivAngledWoodenBoatFrameBlock> getAngledWoodenBoatFrameBlock(WatercraftMaterial material)
+    {
+        return _WOODEN_BOAT_FRAME_ANGLED.get(material);
+    }
 
-    private static final Map<WatercraftMaterial, RegistryObject<FirmacivFlatWoodenBoatFrameBlock>> _WOODEN_BOAT_FRAME_FLAT = new HashMap<WatercraftMaterial, RegistryObject<FirmacivFlatWoodenBoatFrameBlock>>();
+    private static final Map<WatercraftMaterial, RegistryObject<FirmacivFlatWoodenBoatFrameBlock>> _WOODEN_BOAT_FRAME_FLAT = new HashMap<>();
+    public static RegistryObject<FirmacivFlatWoodenBoatFrameBlock> getFlatWoodenBoatFrameBlock(WatercraftMaterial material)
+    {
+        return _WOODEN_BOAT_FRAME_FLAT.get(material);
+    }
 
     private static final ArrayList<Consumer<WriteOnlyRegistration>> _consumers = new ArrayList<>();
     public static void addConsumerForRegistration(Consumer<WriteOnlyRegistration> consumer)
@@ -38,7 +50,8 @@ public class FirmaCivPlusBlocks
             consumer.accept(registrationClass);
         }
 
-        BLOCKS.register(eventBus);
+        if(!BLOCKS.getEntries().isEmpty())
+            BLOCKS.register(eventBus);
     }
 
     public static final class WriteOnlyRegistration

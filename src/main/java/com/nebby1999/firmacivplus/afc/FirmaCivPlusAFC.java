@@ -1,6 +1,7 @@
 package com.nebby1999.firmacivplus.afc;
 
 import com.nebby1999.firmacivplus.FirmaCivPlusBlocks;
+import com.nebby1999.firmacivplus.WatercraftMaterial;
 import com.nebby1999.firmacivplus.util.CommonHelper;
 
 public final class FirmaCivPlusAFC
@@ -20,5 +21,10 @@ public final class FirmaCivPlusAFC
             registration.putAngledBoatFrame(woodEntry, "wood/watercraft_frame/angled/" + woodName, CommonHelper.createAngledWoodenBoatFrameBlock(woodEntry));
             registration.putFlatBoatFrame(woodEntry, "wood/watercraft_frame/flat/" + woodName, CommonHelper.createFlatWoodenBoatFrameBlock(woodEntry));
         }
+    }
+
+    public static void commonSetup()
+    {
+        WatercraftMaterial.registerFrames(AFCWatercraftMaterial.values());
     }
 }
