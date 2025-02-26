@@ -18,15 +18,15 @@ public interface WatercraftMaterial extends BoatMaterial, CanoeMaterial
         {
             FirmacivBlocks.BOAT_FRAME_ANGLED.get()
                     .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
-                            FirmaCivPlusBlocks.getAngledWoodenBoatFrameBlock(material).get());
+                            FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().get(material).get());
 
             FirmacivBlocks.BOAT_FRAME_FLAT.get()
                     .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
-                            FirmaCivPlusBlocks.getFlatWoodenBoatFrameBlock(material).get());
+                            FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().get(material).get());
 
             CanoeComponentBlock.registerCanoeComponent
                     ((RotatedPillarBlock) material.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get(),
-                    FirmaCivPlusBlocks.getCanoeComponentBlock(material).get());
+                    FirmaCivPlusBlocks.getCanoeComponentBlocks().get(material).get());
         }
     }
 }
