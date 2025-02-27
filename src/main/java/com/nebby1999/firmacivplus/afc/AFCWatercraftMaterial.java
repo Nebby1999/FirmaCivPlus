@@ -2,6 +2,7 @@ package com.nebby1999.firmacivplus.afc;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.firmaciv.common.entity.vehicle.CanoeEntity;
+import com.nebby1999.firmacivplus.FirmaCivPlusEntities;
 import com.nebby1999.firmacivplus.WatercraftMaterial;
 import com.therighthon.afc.common.blocks.AFCWood;
 import com.therighthon.afc.common.items.AFCItems;
@@ -57,19 +58,17 @@ public enum AFCWatercraftMaterial implements WatercraftMaterial
     @Override
     public Optional<EntityType<? extends AbstractVehicle>> getEntityType(BoatType boatType)
     {
-        return Optional.empty();
-        /*return switch (boatType) {
-            case ROWBOAT -> Optional.of(FirmaCivPlusEntities.CROSS_COMPAT_ROWBOATS.get(this).get());
-            case SLOOP -> Optional.of(FirmaCivPlusEntities.CROSS_COMPAT_SLOOPS.get(this).get());
-            case CONSTRUCTION_SLOOP -> Optional.of(FirmaCivPlusEntities.CROSS_COMPAT_SLOOPS_UNDER_CONSTRUCTION.get(this).get());
-        };*/
+        return switch (boatType) {
+            case ROWBOAT -> Optional.of(FirmaCivPlusEntities.getRowboats().get(this).get());
+            case SLOOP -> Optional.of(FirmaCivPlusEntities.getSloops().get(this).get());
+            case CONSTRUCTION_SLOOP -> Optional.of(FirmaCivPlusEntities.getSloopsUnderConstruction().get(this).get());
+        };
     }
 
     @Override
     public Optional<EntityType<? extends CanoeEntity>> getCanoeType()
     {
-        return Optional.empty();
-        //return Optional.of(FirmaCivPlusEntities.CROSS_COMPAT_CANOES.get(this).get());
+        return Optional.of(FirmaCivPlusEntities.getCanoes().get(this).get());
     }
 
     @Override

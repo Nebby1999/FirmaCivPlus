@@ -3,17 +3,24 @@ package com.nebby1999.firmacivplus.datagen;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.*;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.firmaciv.Firmaciv;
 import com.alekiponi.firmaciv.common.block.CanoeComponentBlock;
 import com.nebby1999.firmacivplus.FirmaCivPlus;
 import com.nebby1999.firmacivplus.FirmaCivPlusBlocks;
 import com.nebby1999.firmacivplus.WatercraftMaterial;
+import net.dries007.tfc.common.blocks.wood.Wood;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.levelgen.feature.stateproviders.RotatedBlockProvider;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -64,7 +71,7 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
     {
         return (wood, registryObject) ->
         {
-            ModelFile modelFile = null;
+            String namespace = stateProvider.blockTexture(Block.byItem(wood.getStrippedLog())).getNamespace();
             var variantBlockStateBuilder = stateProvider.getVariantBuilder(registryObject.get());
             CANOE_SECTION_TO_STEP_RANGE.forEach((section, canoeCarvedSteps) ->
             {
@@ -85,6 +92,18 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
                             case "all" -> postSectionSelection = whenFacingAndStep;
                         }
 
+                        //Model Creation
+                        var strippedLogSideTexture = new ResourceLocation(namespace, String.format(Locale.ROOT, "block/wood/strippped_log/%s", wood.getSerializedName()));
+                        var strippedLogTopTexture = new ResourceLocation(namespace, String.format(Locale.ROOT, "block/wood/stripped_log_top/%s", wood.getSerializedName()));
+                        String modelName = String.format(Locale.ROOT, "block/wood/canoe_component_block/%s/%s/%s", wood.getSerializedName(), section, step);
+                        String parentName = String.format(Locale.ROOT, "block/canoe_component_block/template/%s/%s",
+                                section, step);
+                        var modelFile = stateProvider.models()
+                                .withExistingParent(modelName, new ResourceLocation("firmaciv", parentName))
+                                .texture("0", strippedLogSideTexture)
+                                .texture("1", strippedLogTopTexture)
+                                .texture("particle", strippedLogSideTexture);
+
                         //set model for state above, rotate on Y if needed
                         var configuredModel = whenFacingAndStep.modelForState()
                                 .modelFile(modelFile);
@@ -92,8 +111,8 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
                         if(validDirection != Direction.NORTH)
                             configuredModel.rotationY(directionToYRot(validDirection));
 
-                        configuredModel.addModel();
-                        configuredModel.build(); //may be wrong?
+                        configuredModel.addModel(); //may be wrong?
+                        variantBlockStateBuilder.addModels(postSectionSelection, configuredModel.buildLast());
                     }
                 }
             });
@@ -184,17 +203,19 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        final var frameFlat = this.models().getExistingFile(this.modLoc("block/watercraft_frame/flat/frame"));
+        var frameFlatResourceLoc = new ResourceLocation(AlekiShips.MOD_ID,"block/watercraft_frame/flat/frame");
+        var exists = this.models().existingFileHelper.exists(frameFlatResourceLoc, PackType.CLIENT_RESOURCES);
+        final var frameFlat = this.models().getExistingFile(new ResourceLocation(AlekiShips.MOD_ID,"block/watercraft_frame/flat/frame"));
 
         FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().forEach(
                 FirmaCivPlusBlockStateProvider.woodenBoatFrameFlat(this, frameFlat));
 
         final ModelFile.ExistingModelFile angledFrameStraight = this.models()
-                .getExistingFile(this.modLoc("block/watercraft_frame/angled/straight"));
+                .getExistingFile(new ResourceLocation(AlekiShips.MOD_ID,"block/watercraft_frame/angled/straight"));
         final ModelFile.ExistingModelFile angledFrameInner = this.models()
-                .getExistingFile(this.modLoc("block/watercraft_frame/angled/inner"));
+                .getExistingFile(new ResourceLocation(AlekiShips.MOD_ID,"block/watercraft_frame/angled/inner"));
         final ModelFile.ExistingModelFile angledFrameOuter = this.models()
-                .getExistingFile(this.modLoc("block/watercraft_frame/angled/outer"));
+                .getExistingFile(new ResourceLocation(AlekiShips.MOD_ID,"block/watercraft_frame/angled/outer"));
 
         FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().forEach(woodenBoatFrameAngled(this, angledFrameStraight, angledFrameInner, angledFrameOuter));
 
