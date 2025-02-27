@@ -9,7 +9,7 @@ public final class FirmaCivPlusAFC
         FirmaCivPlusBlocks.addConsumerForRegistration(FirmaCivPlusAFC::addBlocks);
         FirmaCivPlusEntities.addConsumerForRegistration(FirmaCivPlusAFC::addEntities);
 
-        //We these to the lists, but if we're not a client the classes' init wont even call.
+        //We add these to the lists, but if we're not a client the classes' init wont even call.
         FirmaCivPlusClientEvents.addWatercraftMaterials(AFCWatercraftMaterial.values());
         RenderEventHandler.addWatercraftMaterials(AFCWatercraftMaterial.values());
 
