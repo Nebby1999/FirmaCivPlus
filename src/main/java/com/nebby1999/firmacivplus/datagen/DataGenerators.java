@@ -20,7 +20,6 @@ public class DataGenerators
         DataGenerator generator = evt.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper helper = evt.getExistingFileHelper();
-        CompletableFuture<HolderLookup.Provider> lookupPRovider = evt.getLookupProvider();
 
         generator.addProvider(evt.includeClient(), new FirmaCivPlusBlockStateProvider(packOutput, helper));
     }
