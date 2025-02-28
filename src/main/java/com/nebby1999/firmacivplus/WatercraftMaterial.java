@@ -12,21 +12,26 @@ public interface WatercraftMaterial extends BoatMaterial, CanoeMaterial
 {
     public RegistryWood getWood();
 
+    public boolean isSoftwood();
     public static void registerFrames(WatercraftMaterial[] materials)
     {
         for(var material : materials)
         {
-            FirmacivBlocks.BOAT_FRAME_ANGLED.get()
-                    .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
-                            FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().get(material).get());
-
-            FirmacivBlocks.BOAT_FRAME_FLAT.get()
-                    .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
-                            FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().get(material).get());
-
-            CanoeComponentBlock.registerCanoeComponent
-                    ((RotatedPillarBlock) material.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get(),
-                    FirmaCivPlusBlocks.getCanoeComponentBlocks().get(material).get());
+            if(material.isSoftwood())
+            {
+                CanoeComponentBlock.registerCanoeComponent
+                        ((RotatedPillarBlock) material.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get(),
+                                FirmaCivPlusBlocks.getCanoeComponentBlocks().get(material).get());
+            }
+            else
+            {
+                FirmacivBlocks.BOAT_FRAME_ANGLED.get()
+                        .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
+                                FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().get(material).get());
+                FirmacivBlocks.BOAT_FRAME_FLAT.get()
+                        .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
+                                FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().get(material).get());
+            }
         }
     }
 }

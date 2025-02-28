@@ -62,16 +62,22 @@ public class FirmaCivPlusBlocks
         {
             for(var woodEntry : watercraftMaterials)
             {
-                putCanoeComponentBlock(woodEntry);
-                putAngledBoatFrameBlock(woodEntry);
-                putFlatBoatFrameBlock(woodEntry);
+                if(woodEntry.isSoftwood())
+                {
+                    putCanoeComponentBlock(woodEntry);
+                }
+                else
+                {
+                    putAngledBoatFrameBlock(woodEntry);
+                    putFlatBoatFrameBlock(woodEntry);
+                }
             }
         }
 
         private void putCanoeComponentBlock(WatercraftMaterial watercraftMaterial)
         {
             String name = "wood/canoe_component_block/" + watercraftMaterial.getSerializedName();
-            Supplier supplier = () ->
+            Supplier<CanoeComponentBlock> supplier = () ->
             {
                 var wood = watercraftMaterial.getWood();
                 var strippedLog = wood.getBlock(Wood.BlockType.STRIPPED_LOG).get();
@@ -88,7 +94,7 @@ public class FirmaCivPlusBlocks
         private void putAngledBoatFrameBlock(WatercraftMaterial watercraftMaterial)
         {
             String name = "wood/watercraft_frame/angled/" + watercraftMaterial.getSerializedName();
-            Supplier supplier = () ->
+            Supplier<FirmacivAngledWoodenBoatFrameBlock> supplier = () ->
             {
                 return new FirmacivAngledWoodenBoatFrameBlock(watercraftMaterial, BlockBehaviour.Properties.copy(FirmacivBlocks.BOAT_FRAME_ANGLED.get()));
             };
@@ -99,7 +105,7 @@ public class FirmaCivPlusBlocks
         private void putFlatBoatFrameBlock(WatercraftMaterial watercraftMaterial)
         {
             String name = "wood/watercraft_frame/flat/" + watercraftMaterial.getSerializedName();
-            Supplier supplier = () ->
+            Supplier<FirmacivFlatWoodenBoatFrameBlock> supplier = () ->
             {
                 return new FirmacivFlatWoodenBoatFrameBlock(watercraftMaterial, BlockBehaviour.Properties.copy(FirmacivBlocks.BOAT_FRAME_FLAT.get()));
             };

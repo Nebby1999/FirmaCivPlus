@@ -68,10 +68,16 @@ public class FirmaCivPlusEntities
         {
             for(var material : materials)
             {
-                putCanoeEntity(material);
-                putRowboatEntity(material);
-                putSloopUnderConstructionEntity(material);
-                putSloopEntity(material);
+                if(material.isSoftwood())
+                {
+                    putCanoeEntity(material);
+                }
+                else
+                {
+                    putRowboatEntity(material);
+                    putSloopUnderConstructionEntity(material);
+                    putSloopEntity(material);
+                }
             }
         }
 

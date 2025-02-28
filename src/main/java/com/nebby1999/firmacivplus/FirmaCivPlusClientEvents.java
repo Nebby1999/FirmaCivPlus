@@ -29,6 +29,9 @@ public class FirmaCivPlusClientEvents
 
         for(final var woodEntry : _watercraftMaterials)
         {
+            if(woodEntry.isSoftwood())
+                continue;
+
             evt.registerReloadListener(new PaintedTextureGenerator(
                     new ResourceLocation(FirmaCivPlus.MOD_ID, "entity/watercraft/rowboat/" + woodEntry.getSerializedName()), rowboatPaint
             ));

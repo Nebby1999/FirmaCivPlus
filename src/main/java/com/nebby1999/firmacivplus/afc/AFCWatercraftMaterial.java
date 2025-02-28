@@ -16,21 +16,24 @@ import java.util.Optional;
 
 public enum AFCWatercraftMaterial implements WatercraftMaterial
 {
-    BAOBAB(AFCWood.BAOBAB),
-    EUCALYPTUS(AFCWood.EUCALYPTUS),
-    MAHOGANY(AFCWood.MAHOGANY),
-    HEVEA(AFCWood.HEVEA),
-    TUALANG(AFCWood.TUALANG),
-    TEAK(AFCWood.TEAK),
-    CYPRESS(AFCWood.CYPRESS),
-    FIG(AFCWood.FIG),
-    IRONWOOD(AFCWood.IRONWOOD),
-    IPE(AFCWood.IPE)
+    //softwoods, makes canoes
+    TUALANG(AFCWood.TUALANG, true),
+    CYPRESS(AFCWood.CYPRESS, true),
+    FIG(AFCWood.FIG, true),
+    //hardwoods, makes ships
+    BAOBAB(AFCWood.BAOBAB, false),
+    EUCALYPTUS(AFCWood.EUCALYPTUS, false),
+    MAHOGANY(AFCWood.MAHOGANY, false),
+    HEVEA(AFCWood.HEVEA,false),
+    TEAK(AFCWood.TEAK, false),
+    IRONWOOD(AFCWood.IRONWOOD, false),
+    IPE(AFCWood.IPE, false)
     ;
 
+    public final boolean isSoftwood;
     public final AFCWood wood;
 
-    AFCWatercraftMaterial(AFCWood wood) { this.wood = wood; }
+    AFCWatercraftMaterial(AFCWood wood, boolean isSoftwood) { this.wood = wood; this.isSoftwood = isSoftwood; }
     @Override
     public Item getRailing()
     {
@@ -81,5 +84,11 @@ public enum AFCWatercraftMaterial implements WatercraftMaterial
     public RegistryWood getWood()
     {
         return wood;
+    }
+
+    @Override
+    public boolean isSoftwood()
+    {
+        return isSoftwood;
     }
 }
