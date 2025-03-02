@@ -1,4 +1,4 @@
-package com.nebby1999.firmacivplus.util;
+package com.nebby1999.firmacivplus;
 
 import net.minecraftforge.fml.ModList;
 

@@ -8,25 +8,43 @@ import net.dries007.tfc.common.blocks.wood.Wood;
 import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public interface WatercraftMaterial extends BoatMaterial, CanoeMaterial
 {
-    public RegistryWood getWood();
+    RegistryWood getWood();
 
-    public static void registerFrames(WatercraftMaterial[] materials)
+    boolean isSoftwood();
+
+    HashSet<WatercraftMaterial> _ALL_WATERCRAFT_MATERIALS = new HashSet<>();
+
+    static void addMaterials(WatercraftMaterial[] materials)
     {
-        for(var material : materials)
+        _ALL_WATERCRAFT_MATERIALS.addAll(List.of(materials));
+    }
+
+    static void registerFrames()
+    {
+        for(var material : _ALL_WATERCRAFT_MATERIALS)
         {
-            FirmacivBlocks.BOAT_FRAME_ANGLED.get()
-                    .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
-                            FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().get(material).get());
-
-            FirmacivBlocks.BOAT_FRAME_FLAT.get()
-                    .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
-                            FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().get(material).get());
-
-            CanoeComponentBlock.registerCanoeComponent
-                    ((RotatedPillarBlock) material.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get(),
-                    FirmaCivPlusBlocks.getCanoeComponentBlocks().get(material).get());
+            if(material.isSoftwood())
+            {
+                CanoeComponentBlock.registerCanoeComponent
+                        ((RotatedPillarBlock) material.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get(),
+                                FirmaCivPlusBlocks.getCanoeComponentBlocks().get(material).get());
+            }
+            else
+            {
+                FirmacivBlocks.BOAT_FRAME_ANGLED.get()
+                        .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
+                                FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().get(material).get());
+                FirmacivBlocks.BOAT_FRAME_FLAT.get()
+                        .registerFrame(material.getWood().getBlock(Wood.BlockType.PLANKS).get().asItem(),
+                                FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().get(material).get());
+            }
         }
     }
 }

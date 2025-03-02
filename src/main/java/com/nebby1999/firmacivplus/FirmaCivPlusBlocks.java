@@ -38,73 +38,57 @@ public class FirmaCivPlusBlocks
         return Collections.unmodifiableMap(_WOODEN_BOAT_FRAME_FLAT);
     }
 
-    private static final ArrayList<Consumer<WriteOnlyRegistration>> _consumers = new ArrayList<>();
-    public static void addConsumerForRegistration(Consumer<WriteOnlyRegistration> consumer)
-    {
-        _consumers.add(consumer);
-    }
-
     static void init(IEventBus eventBus)
     {
-        var registrationClass = new WriteOnlyRegistration();
-        for(var consumer : _consumers)
+        for(var woodEntry : WatercraftMaterial._ALL_WATERCRAFT_MATERIALS)
         {
-            consumer.accept(registrationClass);
+            if(woodEntry.isSoftwood())
+            {
+                putCanoeComponentBlock(woodEntry);
+            }
+            else
+            {
+                putAngledBoatFrameBlock(woodEntry);
+                putFlatBoatFrameBlock(woodEntry);
+            }
         }
 
         if(!BLOCKS.getEntries().isEmpty())
             BLOCKS.register(eventBus);
     }
 
-    public static final class WriteOnlyRegistration
+    private static void putCanoeComponentBlock(WatercraftMaterial watercraftMaterial)
     {
-        public void registerFromWatercraftMaterials(WatercraftMaterial[] watercraftMaterials)
+        String name = "wood/canoe_component_block/" + watercraftMaterial.getSerializedName();
+        Supplier<CanoeComponentBlock> supplier = () ->
         {
-            for(var woodEntry : watercraftMaterials)
-            {
-                putCanoeComponentBlock(woodEntry);
-                putAngledBoatFrameBlock(woodEntry);
-                putFlatBoatFrameBlock(woodEntry);
-            }
-        }
+            var wood = watercraftMaterial.getWood();
+            var strippedLog = wood.getBlock(Wood.BlockType.STRIPPED_LOG).get();
 
-        private void putCanoeComponentBlock(WatercraftMaterial watercraftMaterial)
-        {
-            String name = "wood/canoe_component_block/" + watercraftMaterial.getSerializedName();
-            Supplier supplier = () ->
-            {
-                var wood = watercraftMaterial.getWood();
-                var strippedLog = wood.getBlock(Wood.BlockType.STRIPPED_LOG).get();
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.copy(strippedLog).mapColor(wood.woodColor())
+                    .noOcclusion();
+            return new CanoeComponentBlock(properties, watercraftMaterial);
+        };
 
-                BlockBehaviour.Properties properties = BlockBehaviour.Properties.copy(strippedLog).mapColor(wood.woodColor())
-                        .noOcclusion();
-                return new CanoeComponentBlock(properties, watercraftMaterial);
-            };
+        var entry = BLOCKS.register(name, supplier);
+        _CANOE_COMPONENT_BLOCKS.put(watercraftMaterial, entry);
+    }
 
-            var entry = BLOCKS.register(name, supplier);
-            _CANOE_COMPONENT_BLOCKS.put(watercraftMaterial, entry);
-        }
+    private static void putAngledBoatFrameBlock(WatercraftMaterial watercraftMaterial)
+    {
+        String name = "wood/watercraft_frame/angled/" + watercraftMaterial.getSerializedName();
+        Supplier<FirmacivAngledWoodenBoatFrameBlock> supplier = () ->
+                new FirmacivAngledWoodenBoatFrameBlock(watercraftMaterial, BlockBehaviour.Properties.copy(FirmacivBlocks.BOAT_FRAME_ANGLED.get()));
+        var entry = BLOCKS.register(name, supplier);
+        _WOODEN_BOAT_FRAME_ANGLED.put(watercraftMaterial, entry);
+    }
 
-        private void putAngledBoatFrameBlock(WatercraftMaterial watercraftMaterial)
-        {
-            String name = "wood/watercraft_frame/angled/" + watercraftMaterial.getSerializedName();
-            Supplier supplier = () ->
-            {
-                return new FirmacivAngledWoodenBoatFrameBlock(watercraftMaterial, BlockBehaviour.Properties.copy(FirmacivBlocks.BOAT_FRAME_ANGLED.get()));
-            };
-            var entry = BLOCKS.register(name, supplier);
-            _WOODEN_BOAT_FRAME_ANGLED.put(watercraftMaterial, entry);
-        }
-
-        private void putFlatBoatFrameBlock(WatercraftMaterial watercraftMaterial)
-        {
-            String name = "wood/watercraft_frame/flat/" + watercraftMaterial.getSerializedName();
-            Supplier supplier = () ->
-            {
-                return new FirmacivFlatWoodenBoatFrameBlock(watercraftMaterial, BlockBehaviour.Properties.copy(FirmacivBlocks.BOAT_FRAME_FLAT.get()));
-            };
-            var entry = BLOCKS.register(name, supplier);
-            _WOODEN_BOAT_FRAME_FLAT.put(watercraftMaterial, entry);
-        }
+    private static void putFlatBoatFrameBlock(WatercraftMaterial watercraftMaterial)
+    {
+        String name = "wood/watercraft_frame/flat/" + watercraftMaterial.getSerializedName();
+        Supplier<FirmacivFlatWoodenBoatFrameBlock> supplier = () ->
+                new FirmacivFlatWoodenBoatFrameBlock(watercraftMaterial, BlockBehaviour.Properties.copy(FirmacivBlocks.BOAT_FRAME_FLAT.get()));
+        var entry = BLOCKS.register(name, supplier);
+        _WOODEN_BOAT_FRAME_FLAT.put(watercraftMaterial, entry);
     }
 }
