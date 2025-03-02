@@ -1,9 +1,7 @@
-package com.nebby1999.firmacivplus.afc;
+package com.nebby1999.firmacivplus;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.firmaciv.common.entity.vehicle.CanoeEntity;
-import com.nebby1999.firmacivplus.FirmaCivPlusEntities;
-import com.nebby1999.firmacivplus.WatercraftMaterial;
 import com.therighthon.afc.common.blocks.AFCWood;
 import com.therighthon.afc.common.items.AFCItems;
 import net.dries007.tfc.common.blocks.wood.Wood;

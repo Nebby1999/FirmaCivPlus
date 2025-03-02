@@ -1,8 +1,11 @@
 package com.nebby1999.firmacivplus.datagen;
 
+import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.firmaciv.util.FirmacivTags;
 import com.nebby1999.firmacivplus.FirmaCivPlus;
 import com.nebby1999.firmacivplus.FirmaCivPlusBlocks;
+import com.nebby1999.firmacivplus.WatercraftMaterial;
+import net.dries007.tfc.common.blocks.wood.Wood;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -28,5 +31,12 @@ public class FirmaCivPlusItemTagGenerator extends ItemTagsProvider
             tag(FirmacivTags.Items.HARD_WOOD)
                     .add(watercraftMaterial.getDeckItem());
         });
+
+        WatercraftMaterial._ALL_WATERCRAFT_MATERIALS.forEach(watercraftMaterial ->
+        {
+            tag(AlekiShipsTags.Items.CRAFTING_TABLES)
+                    .add(watercraftMaterial.getWood().getBlock(Wood.BlockType.WORKBENCH).get().asItem());
+        });
+
     }
 }

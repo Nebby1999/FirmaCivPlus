@@ -15,13 +15,6 @@ import java.util.List;
 
 public final class RenderEventHandler
 {
-    private static ArrayList<WatercraftMaterial> _watercraftMaterials = new ArrayList<>();
-
-    public static void addWatercraftMaterials(WatercraftMaterial[] materials)
-    {
-        _watercraftMaterials.addAll(List.of(materials));
-    }
-
     static void init(IEventBus evtBus)
     {
         evtBus.addListener(RenderEventHandler::registerRenderers);
@@ -29,7 +22,7 @@ public final class RenderEventHandler
 
     private static void registerRenderers(final EntityRenderersEvent.RegisterRenderers evt)
     {
-        for(final WatercraftMaterial woodEntry : _watercraftMaterials)
+        for(final WatercraftMaterial woodEntry : WatercraftMaterial._ALL_WATERCRAFT_MATERIALS)
         {
             if(woodEntry.isSoftwood())
             {

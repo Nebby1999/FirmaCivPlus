@@ -44,91 +44,73 @@ public class FirmaCivPlusEntities
         return Collections.unmodifiableMap(_SLOOPS);
     }
 
-    private static final ArrayList<Consumer<WriteOnlyRegistration>> _consumers = new ArrayList<>();
-    public static void addConsumerForRegistration(Consumer<WriteOnlyRegistration> consumer)
-    {
-        _consumers.add(consumer);
-    }
-
     static void init(IEventBus eventBus)
     {
-        var registrationClass = new WriteOnlyRegistration();
-        for(var consumer : _consumers)
+        for(var woodEntry : WatercraftMaterial._ALL_WATERCRAFT_MATERIALS)
         {
-            consumer.accept(registrationClass);
+            if(woodEntry.isSoftwood())
+            {
+                putCanoeEntity(woodEntry);
+            }
+            else
+            {
+                putRowboatEntity(woodEntry);
+                putSloopEntity(woodEntry);
+                putSloopUnderConstructionEntity(woodEntry);
+            }
         }
 
         if(!ENTITY_TYPES.getEntries().isEmpty())
             ENTITY_TYPES.register(eventBus);
     }
 
-    public static final class WriteOnlyRegistration
+    private static void putCanoeEntity(WatercraftMaterial watercraftMaterial)
     {
-        public void registerFromWatercraftMaterials(WatercraftMaterial[] materials)
+        String name = "dugout_canoe/" + watercraftMaterial.getSerializedName();
+        var entry = registerEntity(name, EntityType.Builder.of((EntityType<CanoeEntity> entityType, Level level) ->
         {
-            for(var material : materials)
-            {
-                if(material.isSoftwood())
-                {
-                    putCanoeEntity(material);
-                }
-                else
-                {
-                    putRowboatEntity(material);
-                    putSloopUnderConstructionEntity(material);
-                    putSloopEntity(material);
-                }
-            }
-        }
+            return new CanoeEntity(entityType, level, watercraftMaterial);
+        }, MobCategory.MISC));
+        _CANOES.put(watercraftMaterial, entry);
+    }
 
-        private void putCanoeEntity(WatercraftMaterial watercraftMaterial)
+    private static void putRowboatEntity(WatercraftMaterial watercraftMaterial)
+    {
+        String name = "rowboat/" + watercraftMaterial.getSerializedName();
+        var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivRowboatEntity> entityType, Level level) ->
         {
-            String name = "dugout_canoe/" + watercraftMaterial.getSerializedName();
-            var entry = registerEntity(name, EntityType.Builder.of((EntityType<CanoeEntity> entityType, Level level) ->
-            {
-                return new CanoeEntity(entityType, level, watercraftMaterial);
-            }, MobCategory.MISC));
-            _CANOES.put(watercraftMaterial, entry);
-        }
+            return new FirmacivRowboatEntity(entityType, level, watercraftMaterial);
+        }, MobCategory.MISC));
+        _ROWBOATS.put(watercraftMaterial, entry);
+    }
 
-        private void putRowboatEntity(WatercraftMaterial watercraftMaterial)
+    private static void putSloopUnderConstructionEntity(WatercraftMaterial watercraftMaterial)
+    {
+        String name = "sloop_construction/" + watercraftMaterial.getSerializedName();
+        var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivSloopUnderConstructionEntity> entityType, Level level) ->
         {
-            String name = "rowboat/" + watercraftMaterial.getSerializedName();
-            var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivRowboatEntity> entityType, Level level) ->
-            {
-                return new FirmacivRowboatEntity(entityType, level, watercraftMaterial);
-            }, MobCategory.MISC));
-            _ROWBOATS.put(watercraftMaterial, entry);
-        }
+            return new FirmacivSloopUnderConstructionEntity(entityType, level, watercraftMaterial);
+        }, MobCategory.MISC));
+        _SLOOPS_UNDER_CONSTRUCTION.put(watercraftMaterial, entry);
+    }
 
-        private void putSloopUnderConstructionEntity(WatercraftMaterial watercraftMaterial)
+    private static void putSloopEntity(WatercraftMaterial watercraftMaterial)
+    {
+        String name = "sloop/" + watercraftMaterial.getSerializedName();
+        var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivSloopEntity> entityType, Level level) ->
         {
-            String name = "sloop_construction/" + watercraftMaterial.getSerializedName();
-            var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivSloopUnderConstructionEntity> entityType, Level level) ->
-            {
-                return new FirmacivSloopUnderConstructionEntity(entityType, level, watercraftMaterial);
-            }, MobCategory.MISC));
-            _SLOOPS_UNDER_CONSTRUCTION.put(watercraftMaterial, entry);
-        }
+            return new FirmacivSloopEntity(entityType, level, watercraftMaterial);
+        }, MobCategory.MISC));
+        _SLOOPS.put(watercraftMaterial, entry);
+    }
 
-        private void putSloopEntity(WatercraftMaterial watercraftMaterial)
+    private static <E extends Entity> RegistryObject<EntityType<E>> registerEntity(final String name,
+                                                                            final EntityType.Builder<E> builder)
+    {
+        final String id = name.toLowerCase(Locale.ROOT);
+        return ENTITY_TYPES.register(id, () ->
         {
-            String name = "sloop/" + watercraftMaterial.getSerializedName();
-            var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivSloopEntity> entityType, Level level) ->
-            {
-                return new FirmacivSloopEntity(entityType, level, watercraftMaterial);
-            }, MobCategory.MISC));
-            _SLOOPS.put(watercraftMaterial, entry);
-        }
-
-        private <E extends Entity> RegistryObject<EntityType<E>> registerEntity(final String name,
-                                                                                     final EntityType.Builder<E> builder)
-        {
-            final String id = name.toLowerCase(Locale.ROOT);
-            return ENTITY_TYPES.register(id, () ->
-            {
-                return builder.build(FirmaCivPlus.MOD_ID + ":" + id);
-            });
-        }
+            return builder.build(FirmaCivPlus.MOD_ID + ":" + id);
+        });
     }
 }

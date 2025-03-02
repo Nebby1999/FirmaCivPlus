@@ -25,5 +25,7 @@ public final class DataGenerators
         var blockTagGenerator = generator.addProvider(evt.includeServer(), new FirmaCivPlusBlockTagGenerator(packOutput, evt.getLookupProvider(), helper));
         generator.addProvider(evt.includeServer(), new FirmaCivPlusItemTagGenerator(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), helper));
         generator.addProvider(evt.includeClient(), new FirmaCivPlusBlockStateProvider(packOutput, helper));
+        generator.addProvider(evt.includeServer(), new FirmaCivPlusEntityTypeTagsGenerator(packOutput, lookupProvider, helper));
+        generator.addProvider(evt.includeServer(), FirmaCivPlusLootTableProvider.create(packOutput));
     }
 }

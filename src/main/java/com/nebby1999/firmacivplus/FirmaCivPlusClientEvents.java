@@ -11,12 +11,6 @@ import java.util.List;
 
 public class FirmaCivPlusClientEvents
 {
-    private static List<WatercraftMaterial> _watercraftMaterials = new ArrayList<>();
-    public static void addWatercraftMaterials(WatercraftMaterial[] watercraftMaterials)
-    {
-        _watercraftMaterials.addAll(List.of(watercraftMaterials));
-    }
-
     static void init(IEventBus evtBus)
     {
         evtBus.addListener(FirmaCivPlusClientEvents::onRegisterReloadListeners);
@@ -27,7 +21,7 @@ public class FirmaCivPlusClientEvents
         final ResourceLocation rowboatPaint = new ResourceLocation(AlekiShips.MOD_ID, "entity/watercraft/rowboat/paint");
         final ResourceLocation sloopPaint = new ResourceLocation(AlekiShips.MOD_ID, "entity/watercraft/sloop/paint");
 
-        for(final var woodEntry : _watercraftMaterials)
+        for(final var woodEntry : WatercraftMaterial._ALL_WATERCRAFT_MATERIALS)
         {
             if(woodEntry.isSoftwood())
                 continue;
