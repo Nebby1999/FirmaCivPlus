@@ -1,10 +1,7 @@
 package com.nebby1999.firmacivplus.datagen.loot;
 
 import com.alekiponi.alekiships.common.block.FlatBoatFrameBlock;
-import com.alekiponi.firmaciv.common.block.FirmacivAngledBoatFrameBlock;
-import com.alekiponi.firmaciv.common.block.FirmacivBlocks;
-import com.alekiponi.firmaciv.common.block.FirmacivFlatBoatFrameBlock;
-import com.alekiponi.firmaciv.common.block.FirmacivFlatWoodenBoatFrameBlock;
+import com.alekiponi.firmaciv.common.block.*;
 import com.alekiponi.firmaciv.common.item.FirmacivItems;
 import com.nebby1999.firmacivplus.FirmaCivPlusBlocks;
 import com.nebby1999.firmacivplus.WatercraftMaterial;
@@ -48,6 +45,12 @@ public class FirmaCivPlusBlockLootTables extends BlockLootSubProvider
         {
             add(firmacivFlatWoodenBoatFrameBlockRegistryObject.get(), block ->
                     createBoatFrameFlatTable(block, watercraftMaterial));
+        });
+
+        FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().forEach((watercraftMaterial, firmacivAngledWoodenBoatFrameBlockRegistryObject) ->
+        {
+            add(firmacivAngledWoodenBoatFrameBlockRegistryObject.get(), block ->
+                    createBoatFrameAngledTable(block, watercraftMaterial));
         });
     }
 
@@ -96,14 +99,59 @@ public class FirmaCivPlusBlockLootTables extends BlockLootSubProvider
         return lootTable;
     }
 
+    protected <T extends Comparable<T> & StringRepresentable> LootTable.Builder createBoatFrameAngledTable(Block pBlock, WatercraftMaterial material) {
+        var lootTable = LootTable.lootTable();
+
+        //base frame drop
+        lootTable
+                .withPool(applyExplosionCondition(pBlock, LootPool.lootPool().setRolls(ConstantValue.exactly(1F)))
+                        .add(LootItem.lootTableItem(FirmacivBlocks.BOAT_FRAME_ANGLED.get())));
+
+        //handle plank drop
+        ArrayList<LootPoolEntryContainer.Builder<?>> alternatives = new ArrayList<>();
+        for(int frameProcessed : FirmacivAngledWoodenBoatFrameBlock.FRAME_PROCESSED.getPossibleValues())
+        {
+            int count = Math.min(frameProcessed + 1, 4);
+            alternatives.add(LootItem.lootTableItem(material.getDeckItem())
+                    .when(LootItemBlockStatePropertyCondition
+                            .hasBlockStateProperties(pBlock)
+                            .setProperties(StatePropertiesPredicate.Builder.properties()
+                                    .hasProperty(FirmacivAngledWoodenBoatFrameBlock.FRAME_PROCESSED, frameProcessed)))
+                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(count))));
+        }
+        lootTable.withPool(applyExplosionCondition(pBlock, LootPool.lootPool().setRolls(ConstantValue.exactly(1f))
+                .add(AlternativesEntry.alternatives(alternatives, func -> func))));
+
+        alternatives.clear();
+        for(int frameProcessed : FirmacivAngledWoodenBoatFrameBlock.FRAME_PROCESSED.getPossibleValues())
+        {
+            if(frameProcessed + 1 <= 4)
+            {
+                continue;
+            }
+
+            int count = frameProcessed % 4;
+            alternatives.add(LootItem.lootTableItem(FirmacivItems.COPPER_BOLT.get())
+                    .when(LootItemBlockStatePropertyCondition
+                            .hasBlockStateProperties(pBlock)
+                            .setProperties(StatePropertiesPredicate.Builder.properties()
+                                    .hasProperty(FirmacivAngledWoodenBoatFrameBlock.FRAME_PROCESSED, frameProcessed)))
+                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(count + 1))));
+        }
+        lootTable.withPool(applyExplosionCondition(pBlock, LootPool.lootPool().setRolls(ConstantValue.exactly(1f))
+                .add(AlternativesEntry.alternatives(alternatives, func -> func))));
+
+        return lootTable;
+    }
+
     @Override
     protected @NotNull Iterable<Block> getKnownBlocks() {
         return FirmaCivPlusBlocks.BLOCKS.getEntries().stream().filter(b ->
         {
             var flag1 = FirmaCivPlusBlocks.getCanoeComponentBlocks().containsValue(b);
             var flag2 = FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().containsValue(b);
-
-            return flag1 || flag2;
+            var flag3 = FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().containsValue(b);
+            return flag1 || flag2 || flag3;
         }).map(RegistryObject::get)::iterator;
     }
 }

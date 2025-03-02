@@ -130,16 +130,28 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
             final var multipartBuilder = blockStateProvider.getMultipartBuilder(registryObject.get()).part()
                     .modelFile(frameFlat).addModel().end();
 
-            IntStream.range(0, 4).forEach(progress -> {
-                final var plankModel = blockStateProvider.models().withExistingParent(
-                        String.format(Locale.ROOT, "block/wood/watercraft_frame/flat/%s/%s", wood.getSerializedName(),
-                                BOAT_FRAME_PROGRESS_STRINGS[progress]), new ResourceLocation(AlekiShips.MOD_ID,
-                                String.format(Locale.ROOT, "block/watercraft_frame/flat/template/%s",
-                                        BOAT_FRAME_PROGRESS_STRINGS[progress]))).texture("plank", plankTexture);
+            IntStream.range(0, 8).forEach(progress -> {
+                if(progress < 4)
+                {
+                    final var plankModel = blockStateProvider.models().withExistingParent(
+                            String.format(Locale.ROOT, "block/wood/watercraft_frame/flat/%s/%s", wood.getSerializedName(),
+                                    BOAT_FRAME_PROGRESS_STRINGS[progress]), new ResourceLocation(AlekiShips.MOD_ID,
+                                    String.format(Locale.ROOT, "block/watercraft_frame/flat/template/%s",
+                                            BOAT_FRAME_PROGRESS_STRINGS[progress]))).texture("plank", plankTexture);
 
-                multipartBuilder.part().modelFile(plankModel).addModel()
-                        .condition(FlatWoodenBoatFrameBlock.FRAME_PROCESSED,
-                                IntStream.range(progress, 4).boxed().toArray(Integer[]::new));
+
+
+                    multipartBuilder.part().modelFile(plankModel).addModel()
+                            .condition(FlatWoodenBoatFrameBlock.FRAME_PROCESSED,
+                                    IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
+                }
+                else
+                {
+                    final var plankModel = blockStateProvider.models().getExistingFile(new ResourceLocation(Firmaciv.MOD_ID, String.format(Locale.ROOT, "block/watercraft_frame/flat/bolt/%s", BOAT_FRAME_PROGRESS_STRINGS[progress % 4])));
+
+                    multipartBuilder.part().modelFile(plankModel).addModel()
+                            .condition(FlatWoodenBoatFrameBlock.FRAME_PROCESSED, IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
+                }
             });
         };
     }
@@ -167,21 +179,34 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
                             .condition(AngledWoodenBoatFrameBlock.FACING, facing)
                             .condition(AngledWoodenBoatFrameBlock.SHAPE, shape);
 
-                    IntStream.range(0, 4).forEach(progress -> {
+                    IntStream.range(0, 8).forEach(progress -> {
                         final String modelShape = shape == StairsShape.STRAIGHT ? "straight" : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? "inner" : "outer";
-                        final var plankModel = blockStateProvider.models().withExistingParent(
-                                        String.format(Locale.ROOT, "block/wood/watercraft_frame/angled/%s/%s/%s",
-                                                wood.getSerializedName(), modelShape, BOAT_FRAME_PROGRESS_STRINGS[progress]),
-                                        new ResourceLocation(AlekiShips.MOD_ID,
-                                                String.format(Locale.ROOT, "block/watercraft_frame/angled/template/%s/%s",
-                                                        modelShape, BOAT_FRAME_PROGRESS_STRINGS[progress])))
-                                .texture("plank", plankTexture);
+                        if(progress < 4)
+                        {
+                            final var plankModel = blockStateProvider.models().withExistingParent(
+                                            String.format(Locale.ROOT, "block/wood/watercraft_frame/angled/%s/%s/%s",
+                                                    wood.getSerializedName(), modelShape, BOAT_FRAME_PROGRESS_STRINGS[progress]),
+                                            new ResourceLocation(AlekiShips.MOD_ID,
+                                                    String.format(Locale.ROOT, "block/watercraft_frame/angled/template/%s/%s",
+                                                            modelShape, BOAT_FRAME_PROGRESS_STRINGS[progress])))
+                                    .texture("plank", plankTexture);
 
-                        multipartBuilder.part().modelFile(plankModel).rotationY(yRot).uvLock(yRot != 0).addModel()
-                                .condition(AngledWoodenBoatFrameBlock.FACING, facing)
-                                .condition(AngledWoodenBoatFrameBlock.SHAPE, shape)
-                                .condition(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
-                                        IntStream.range(progress, 4).boxed().toArray(Integer[]::new));
+                            multipartBuilder.part().modelFile(plankModel).rotationY(yRot).uvLock(yRot != 0).addModel()
+                                    .condition(AngledWoodenBoatFrameBlock.FACING, facing)
+                                    .condition(AngledWoodenBoatFrameBlock.SHAPE, shape)
+                                    .condition(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
+                                            IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
+                        }
+                        else
+                        {
+                            final var plankModel = blockStateProvider.models().getExistingFile(new ResourceLocation(Firmaciv.MOD_ID, String.format(Locale.ROOT, "block/watercraft_frame/angled/bolt/%s/%s", modelShape, BOAT_FRAME_PROGRESS_STRINGS[progress % 4])));
+
+                            multipartBuilder.part().modelFile(plankModel).rotationY(yRot).uvLock(yRot != 0).addModel()
+                                    .condition(AngledWoodenBoatFrameBlock.FACING, facing)
+                                    .condition(AngledWoodenBoatFrameBlock.SHAPE, shape)
+                                    .condition(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
+                                            IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
+                        }
                     });
                 });
             });
