@@ -27,5 +27,6 @@ public final class DataGenerators
         generator.addProvider(evt.includeClient(), new FirmaCivPlusBlockStateProvider(packOutput, helper));
         generator.addProvider(evt.includeServer(), new FirmaCivPlusEntityTypeTagsGenerator(packOutput, lookupProvider, helper));
         generator.addProvider(evt.includeServer(), FirmaCivPlusLootTableProvider.create(packOutput));
+        generator.addProvider(evt.includeServer(), new FirmaCivPlusRecipeProvider(packOutput));
     }
 }
