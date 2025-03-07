@@ -2,25 +2,18 @@ package com.nebby1999.firmacivplus.datagen;
 
 import com.nebby1999.firmacivplus.FirmaCivPlus;
 import com.nebby1999.firmacivplus.FirmaCivPlusBlocks;
-import com.nebby1999.firmacivplus.FirmaCivPlusItems;
 import com.nebby1999.firmacivplus.datagen.recipe_builders.AdvancedCraftingRecipeBuilder;
-import com.therighthon.afc.common.blocks.AFCWood;
-import net.dries007.tfc.common.TFCTags;
+import com.nebby1999.firmacivplus.datagen.recipe_builders.DisabledRecipe;
 import net.dries007.tfc.common.blocks.wood.Wood;
-import net.dries007.tfc.common.recipes.DamageInputsCraftingRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.crafting.*;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.conditions.FalseCondition;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Consumer;
@@ -61,6 +54,9 @@ public class FirmaCivPlusRecipeProvider extends RecipeProvider
                     .unlockedBy("has_roofing", has(squaredAngleBlockRegistryObject.get()))
                     .save(consumer, new ResourceLocation(FirmaCivPlus.MOD_ID, "crafting/" + lumberRegistry.getPath()));
 
+            //kill off the boat
+            var dummy = new DisabledRecipe(new ResourceLocation(lumberRegistry.getNamespace(), "crafting/wood/" + watercraftMaterial.getSerializedName() + "_boat"));
+            consumer.accept(dummy);
         });
     }
 }

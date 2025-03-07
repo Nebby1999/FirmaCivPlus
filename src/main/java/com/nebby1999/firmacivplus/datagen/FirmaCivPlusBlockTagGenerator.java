@@ -42,6 +42,8 @@ public class FirmaCivPlusBlockTagGenerator extends BlockTagsProvider
 
             tag(FirmacivTags.Blocks.CAN_MAKE_CANOE)
                     .add(watercraftMaterial.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get());
+            tag(FirmacivTags.Blocks.CAN_MAKE_CANOE_UNRESTRICTED)
+                    .add(watercraftMaterial.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get());
         });
 
         FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().forEach((watercraftMaterial, firmacivFlatWoodenBoatFrameBlockRegistryObject) ->
