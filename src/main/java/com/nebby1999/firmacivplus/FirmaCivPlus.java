@@ -34,6 +34,7 @@ public class FirmaCivPlus
         }*/
 
         FirmaCivPlusBlocks.init(bus);
+        FirmaCivPlusItems.init(bus);
         FirmaCivPlusBlockEntities.init(bus);
         FirmaCivPlusEntities.init(bus);
 

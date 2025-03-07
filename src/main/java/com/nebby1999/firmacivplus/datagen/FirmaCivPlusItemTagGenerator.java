@@ -36,6 +36,8 @@ public class FirmaCivPlusItemTagGenerator extends ItemTagsProvider
         {
             tag(AlekiShipsTags.Items.CRAFTING_TABLES)
                     .add(watercraftMaterial.getWood().getBlock(Wood.BlockType.WORKBENCH).get().asItem());
+            tag(FirmacivTags.Items.CHESTS)
+                    .add(watercraftMaterial.getWood().getBlock(Wood.BlockType.CHEST).get().asItem());
         });
 
     }

@@ -1,5 +1,7 @@
 package com.nebby1999.firmacivplus.datagen;
 
+import com.alekiponi.alekiroofs.AlekiRoofs;
+import com.alekiponi.alekiroofs.SquaredAngleBlock;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.*;
 import com.alekiponi.firmaciv.Firmaciv;
@@ -7,6 +9,8 @@ import com.alekiponi.firmaciv.common.block.CanoeComponentBlock;
 import com.nebby1999.firmacivplus.FirmaCivPlus;
 import com.nebby1999.firmacivplus.FirmaCivPlusBlocks;
 import com.nebby1999.firmacivplus.WatercraftMaterial;
+import net.dries007.tfc.common.blocks.wood.Wood;
+import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +24,7 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 import java.util.Locale;
@@ -48,18 +53,6 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
 
     public FirmaCivPlusBlockStateProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
         super(output, FirmaCivPlus.MOD_ID, existingFileHelper);
-    }
-
-    static Function<BlockState, ConfiguredModel[]> angledBoatFrame(final ModelFile straight,
-                                                                          final ModelFile inner, final ModelFile outer) {
-        return blockState -> {
-            final StairsShape shape = blockState.getValue(StairBlock.SHAPE);
-            final int yRot = angledBoatFrameYRot(shape, blockState.getValue(StairBlock.FACING));
-
-            return ConfiguredModel.builder().modelFile(
-                            shape == StairsShape.STRAIGHT ? straight : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? inner : outer)
-                    .rotationY(yRot)/*.uvLock(yRot != 0)*/.build();
-        };
     }
 
     static BiConsumer<WatercraftMaterial, Supplier<? extends Block>> canoeComponentBlock(final FirmaCivPlusBlockStateProvider stateProvider)
@@ -115,6 +108,58 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
                     }
                 }
             });
+        };
+    }
+
+
+    private BiConsumer<WatercraftMaterial, Supplier<? extends SquaredAngleBlock>> woodRoofing(FirmaCivPlusBlockStateProvider stateProvider) {
+        return (watercraftMaterial, registryObject) ->
+        {
+            var registryWood = watercraftMaterial.getWood();
+            String namespace = stateProvider.blockTexture(registryWood.getBlock(Wood.BlockType.PLANKS).get()).getNamespace();
+            var variantBlockStateBuilder = stateProvider.getVariantBuilder(registryObject.get());
+
+            SquaredAngleBlock.FACING.getPossibleValues().forEach(facing ->
+            {
+                SquaredAngleBlock.SHAPE.getPossibleValues().forEach(shape ->
+                {
+                    int yRot = (int) ((switch(shape)
+                                        {
+                                            case INNER_LEFT, OUTER_LEFT -> facing.toYRot();
+                                            case INNER_RIGHT, OUTER_RIGHT, STRAIGHT -> facing.toYRot() + 90;
+                                        }) % 360);
+
+                    var whenFacingAndShape = variantBlockStateBuilder.partialState()
+                            .with(SquaredAngleBlock.FACING, facing)
+                            .with(SquaredAngleBlock.SHAPE, shape);
+
+                    String parentModelShape = null;
+                    switch(shape)
+                    {
+                        case INNER_RIGHT, INNER_LEFT -> parentModelShape = "_inner";
+                        case OUTER_LEFT, OUTER_RIGHT -> parentModelShape = "_outer";
+                        case STRAIGHT -> parentModelShape = "";
+                    }
+
+                    var planksTexture = new ResourceLocation(namespace, String.format(Locale.ROOT, "block/wood/planks/%s", registryWood.getSerializedName()));
+                    String modelName = "block/wood/" + registryWood.getSerializedName() + "_roofing" + parentModelShape;
+                    String parentName = "block/roofing" + parentModelShape;
+
+                    var modelFile = stateProvider.models()
+                            .withExistingParent(modelName, new ResourceLocation("alekiroofs", parentName))
+                            .texture("bottom", planksTexture)
+                            .texture("top", planksTexture)
+                            .texture("side", planksTexture);
+
+                    var configuredModel = whenFacingAndShape.modelForState()
+                            .modelFile(modelFile)
+                            .rotationY(yRot)
+                            .uvLock(yRot != 0);
+
+                    configuredModel.addModel();
+                });
+            });
+            itemModels().withExistingParent("item/wood/" + registryWood.getSerializedName() + "_roofing", modLoc("block/wood/" + registryWood.getSerializedName() + "_roofing"));
         };
     }
 
@@ -201,7 +246,7 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
                         {
                             final var plankModel = blockStateProvider.models().getExistingFile(new ResourceLocation(Firmaciv.MOD_ID, String.format(Locale.ROOT, "block/watercraft_frame/angled/bolt/%s/%s", modelShape, BOAT_FRAME_PROGRESS_STRINGS[progress % 4])));
 
-                            multipartBuilder.part().modelFile(plankModel).rotationY(yRot).uvLock(yRot != 0).addModel()
+                            multipartBuilder.part().modelFile(plankModel).rotationY(yRot)/*.uvLock(yRot != 0)*/.addModel()
                                     .condition(AngledWoodenBoatFrameBlock.FACING, facing)
                                     .condition(AngledWoodenBoatFrameBlock.SHAPE, shape)
                                     .condition(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
@@ -212,7 +257,7 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
             });
         };
     }
-    
+
     static int angledBoatFrameYRot(final StairsShape shape, final Direction facing) {
         return switch (shape) {
             case INNER_RIGHT, STRAIGHT -> ((int) facing.toYRot());
@@ -253,5 +298,8 @@ public class FirmaCivPlusBlockStateProvider extends BlockStateProvider {
         FirmaCivPlusBlocks.getWoodenBoatFrameAngledBlocks().forEach(woodenBoatFrameAngled(this, angledFrameStraight, angledFrameInner, angledFrameOuter));
 
         FirmaCivPlusBlocks.getCanoeComponentBlocks().forEach(canoeComponentBlock(this));
+
+        FirmaCivPlusBlocks.getWoodRoofings().forEach(woodRoofing(this));
+
     }
 }

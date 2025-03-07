@@ -22,10 +22,13 @@ public final class DataGenerators
         ExistingFileHelper helper = evt.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = evt.getLookupProvider();
 
+        generator.addProvider(evt.includeClient(), new FirmaCivPlusBlockStateProvider(packOutput, helper));
+        generator.addProvider(evt.includeClient(), new FirmaCivPlus_en_us_LanguageProvider(packOutput));
+
         var blockTagGenerator = generator.addProvider(evt.includeServer(), new FirmaCivPlusBlockTagGenerator(packOutput, evt.getLookupProvider(), helper));
         generator.addProvider(evt.includeServer(), new FirmaCivPlusItemTagGenerator(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), helper));
-        generator.addProvider(evt.includeClient(), new FirmaCivPlusBlockStateProvider(packOutput, helper));
         generator.addProvider(evt.includeServer(), new FirmaCivPlusEntityTypeTagsGenerator(packOutput, lookupProvider, helper));
         generator.addProvider(evt.includeServer(), FirmaCivPlusLootTableProvider.create(packOutput));
+        generator.addProvider(evt.includeServer(), new FirmaCivPlusRecipeProvider(packOutput));
     }
 }

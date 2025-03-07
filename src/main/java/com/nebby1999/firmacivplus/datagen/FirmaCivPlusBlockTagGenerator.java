@@ -1,5 +1,6 @@
 package com.nebby1999.firmacivplus.datagen;
 
+import com.alekiponi.alekiroofs.AlekiRoofs;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.firmaciv.util.FirmacivTags;
 import com.nebby1999.firmacivplus.FirmaCivPlus;
@@ -7,7 +8,11 @@ import com.nebby1999.firmacivplus.FirmaCivPlusBlocks;
 import com.nebby1999.firmacivplus.WatercraftMaterial;
 import net.dries007.tfc.common.blocks.wood.Wood;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -37,6 +42,8 @@ public class FirmaCivPlusBlockTagGenerator extends BlockTagsProvider
 
             tag(FirmacivTags.Blocks.CAN_MAKE_CANOE)
                     .add(watercraftMaterial.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get());
+            tag(FirmacivTags.Blocks.CAN_MAKE_CANOE_UNRESTRICTED)
+                    .add(watercraftMaterial.getWood().getBlock(Wood.BlockType.STRIPPED_LOG).get());
         });
 
         FirmaCivPlusBlocks.getWoodenBoatFrameFlatBlocks().forEach((watercraftMaterial, firmacivFlatWoodenBoatFrameBlockRegistryObject) ->
@@ -49,6 +56,14 @@ public class FirmaCivPlusBlockTagGenerator extends BlockTagsProvider
         {
             tag(AlekiShipsTags.Blocks.WOODEN_WATERCRAFT_FRAMES)
                     .add(firmacivAngledWoodenBoatFrameBlockRegistryObject.get());
+        });
+
+        FirmaCivPlusBlocks.getWoodRoofings().forEach((registryWood, squaredAngleBlockRegistryObject) ->
+        {
+            tag(TagKey.create(Registries.BLOCK, new ResourceLocation("alekiroofs", "roofing")))
+                    .add(squaredAngleBlockRegistryObject.get());
+            tag(BlockTags.MINEABLE_WITH_AXE)
+                    .add(squaredAngleBlockRegistryObject.get());
         });
     }
 }

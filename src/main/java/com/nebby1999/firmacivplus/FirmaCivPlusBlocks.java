@@ -1,11 +1,16 @@
 package com.nebby1999.firmacivplus;
 
+import com.alekiponi.alekiroofs.SquaredAngleBlock;
 import com.alekiponi.firmaciv.common.block.CanoeComponentBlock;
 import com.alekiponi.firmaciv.common.block.FirmacivAngledWoodenBoatFrameBlock;
 import com.alekiponi.firmaciv.common.block.FirmacivBlocks;
 import com.alekiponi.firmaciv.common.block.FirmacivFlatWoodenBoatFrameBlock;
 import net.dries007.tfc.common.blocks.wood.Wood;
+import net.dries007.tfc.util.registry.RegistryWood;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -13,7 +18,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class FirmaCivPlusBlocks
@@ -38,10 +42,18 @@ public class FirmaCivPlusBlocks
         return Collections.unmodifiableMap(_WOODEN_BOAT_FRAME_FLAT);
     }
 
+    private static final Map<WatercraftMaterial, RegistryObject<SquaredAngleBlock>> _WOOD_ROOFING = new HashMap<>();
+    public static Map<WatercraftMaterial, RegistryObject<SquaredAngleBlock>> getWoodRoofings()
+    {
+        return Collections.unmodifiableMap(_WOOD_ROOFING);
+    }
+
+
     static void init(IEventBus eventBus)
     {
         for(var woodEntry : WatercraftMaterial._ALL_WATERCRAFT_MATERIALS)
         {
+            putWoodRoofing(woodEntry);
             if(woodEntry.isSoftwood())
             {
                 putCanoeComponentBlock(woodEntry);
@@ -55,6 +67,23 @@ public class FirmaCivPlusBlocks
 
         if(!BLOCKS.getEntries().isEmpty())
             BLOCKS.register(eventBus);
+    }
+
+    private static void putWoodRoofing(WatercraftMaterial watercraftMaterial)
+    {
+        String name = "wood/" + watercraftMaterial.getSerializedName() + "_roofing";
+        Supplier<SquaredAngleBlock> supplier = () ->
+        {
+            var stairs = watercraftMaterial.getWood().getBlock(Wood.BlockType.STAIRS).get();
+            var blockState = stairs.defaultBlockState();
+            var blockProperties = BlockBehaviour.Properties.copy(stairs)
+                    .mapColor(watercraftMaterial.getWood().woodColor()).noOcclusion();
+            return new SquaredAngleBlock(blockState, blockProperties);
+        };
+
+        var entry = BLOCKS.register(name, supplier);
+        _WOOD_ROOFING.put(watercraftMaterial, entry);
+        FirmaCivPlusItems.ITEMS.register(name, () -> new BlockItem(entry.get(), new Item.Properties()));
     }
 
     private static void putCanoeComponentBlock(WatercraftMaterial watercraftMaterial)

@@ -95,7 +95,9 @@ minecraft {
                     '--existing-mod',
                     'afc',
                     '--existing-mod',
-                    'firmaciv'
+                    'firmaciv',
+                    '--existing-mod',
+                    'alekiroofs'
             )
         }
     }
@@ -178,11 +180,9 @@ dependencies {
     // at runtime, use the full JEI jar for Forge
     compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge:15.3.0.7"))
 
-    //REI
-    runtimeOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.118")
-    runtimeOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:12.1.725")
-    compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-api-forge:12.1.725")
-    compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-default-plugin-forge:12.1.725")
+    // KJS
+    implementation fg.deobf("maven.modrinth:rhino:2001.2.2-build.18+forge")
+    implementation fg.deobf("maven.modrinth:kubejs:2001.6.5-build.7+forge")
 
     //EMI
     implementation fg.deobf("dev.emi:emi-forge:1.1.13+1.20.1")
@@ -196,7 +196,15 @@ dependencies {
 
     // FirmaCiv
     implementation fg.deobf("maven.modrinth:firmaciv:1.0.9");
+
+    //Alekiships
     implementation fg.deobf("maven.modrinth:alekiships:1.0.14")
+
+    //AlekiRoofs
+    implementation (jarJar(fg.deobf("curse.maven:alekis-ridiculously-simple-roofs-1010046:5310531"))) {
+        jarJar.ranged(it as Dependency, "[1.0,)")
+    }
+
 
     // ArborFirmaCraft
     implementation fg.deobf("maven.modrinth:arborfirmacraft-(afc):1.0.13-1.20.1")
