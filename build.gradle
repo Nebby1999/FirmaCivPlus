@@ -95,6 +95,8 @@ minecraft {
                     '--existing-mod',
                     'afc',
                     '--existing-mod',
+                    'beneath',
+                    '--existing-mod',
                     'firmaciv',
                     '--existing-mod',
                     'alekiroofs'
