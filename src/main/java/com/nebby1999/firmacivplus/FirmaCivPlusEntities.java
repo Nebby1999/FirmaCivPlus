@@ -67,40 +67,54 @@ public class FirmaCivPlusEntities
     private static void putCanoeEntity(WatercraftMaterial watercraftMaterial)
     {
         String name = "dugout_canoe/" + watercraftMaterial.getSerializedName();
-        var entry = registerEntity(name, EntityType.Builder.of((EntityType<CanoeEntity> entityType, Level level) ->
+        var builder = EntityType.Builder.of((EntityType<CanoeEntity> entityType, Level level) ->
         {
             return new CanoeEntity(entityType, level, watercraftMaterial);
-        }, MobCategory.MISC));
+        }, MobCategory.MISC)
+                .sized(1.125f, 0.625f);
+
+        var entry = registerEntity(name, builder);
         _CANOES.put(watercraftMaterial, entry);
     }
 
     private static void putRowboatEntity(WatercraftMaterial watercraftMaterial)
     {
         String name = "rowboat/" + watercraftMaterial.getSerializedName();
-        var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivRowboatEntity> entityType, Level level) ->
+        var builder = EntityType.Builder.of((EntityType<FirmacivRowboatEntity> entityType, Level level) ->
         {
             return new FirmacivRowboatEntity(entityType, level, watercraftMaterial);
-        }, MobCategory.MISC));
+        }, MobCategory.MISC).sized(1.875f, 0.625f);
+
+        var entry = registerEntity(name, builder);
         _ROWBOATS.put(watercraftMaterial, entry);
     }
 
     private static void putSloopUnderConstructionEntity(WatercraftMaterial watercraftMaterial)
     {
         String name = "sloop_construction/" + watercraftMaterial.getSerializedName();
-        var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivSloopUnderConstructionEntity> entityType, Level level) ->
+        var builder = EntityType.Builder.of((EntityType<FirmacivSloopUnderConstructionEntity> entityType, Level level) ->
         {
             return new FirmacivSloopUnderConstructionEntity(entityType, level, watercraftMaterial);
-        }, MobCategory.MISC));
+        }, MobCategory.MISC).sized(4f, 0.75f)
+                .setTrackingRange(20)
+                .fireImmune()
+                .noSummon();
+
+        var entry = registerEntity(name, builder);
         _SLOOPS_UNDER_CONSTRUCTION.put(watercraftMaterial, entry);
     }
 
     private static void putSloopEntity(WatercraftMaterial watercraftMaterial)
     {
         String name = "sloop/" + watercraftMaterial.getSerializedName();
-        var entry = registerEntity(name, EntityType.Builder.of((EntityType<FirmacivSloopEntity> entityType, Level level) ->
+        var builder = EntityType.Builder.of((EntityType<FirmacivSloopEntity> entityType, Level level) ->
         {
             return new FirmacivSloopEntity(entityType, level, watercraftMaterial);
-        }, MobCategory.MISC));
+        }, MobCategory.MISC).sized(3f, 0.75f)
+                .setTrackingRange(20)
+                .fireImmune();
+
+        var entry = registerEntity(name, builder);
         _SLOOPS.put(watercraftMaterial, entry);
     }
 
