@@ -31,7 +31,7 @@ public class FirmaCivPlusClientEvents
             ));
 
             evt.registerReloadListener(new PaintedTextureGenerator(
-                    new ResourceLocation(FirmaCivPlus.MOD_ID, "entity/watercraft/sloop" + woodEntry.getSerializedName()), sloopPaint
+                    new ResourceLocation(FirmaCivPlus.MOD_ID, "entity/watercraft/sloop/" + woodEntry.getSerializedName()), sloopPaint
             ));
         }
     }
