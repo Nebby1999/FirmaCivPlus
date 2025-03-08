@@ -27,11 +27,11 @@ public class FirmaCivPlus
             LOGGER.info("Enabling FirmaCiv+ArborFirmaCraft cross compat");
             WatercraftMaterial.addMaterials(AFCWatercraftMaterial.values());
         }
-        /*if(FirmaCivPlusModsResolver.BENEATH.isLoaded())
+        if(FirmaCivPlusModsResolver.BENEATH.isLoaded())
         {
             LOGGER.info("Enabling FirmaCiv+Beneath cross compat");
-            //FirmaCivPlusBeneath.init();
-        }*/
+            WatercraftMaterial.addMaterials(BeneathWatercraftMaterial.values());
+        }
 
         FirmaCivPlusBlocks.init(bus);
         FirmaCivPlusItems.init(bus);
