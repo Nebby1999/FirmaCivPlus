@@ -191,10 +191,10 @@ dependencies {
 
     // TFC
     implementation fg.deobf("maven.modrinth:patchouli:1.20.1-84-forge")
-    implementation fg.deobf("maven.modrinth:terrafirmacraft:3.2.5")
+    implementation fg.deobf("maven.modrinth:terrafirmacraft:3.2.12")
 
     // Beneath
-    implementation fg.deobf("maven.modrinth:beneath:1.0.1") { transitive = false }
+    implementation fg.deobf("maven.modrinth:beneath:1.0.4") { transitive = false }
 
     // FirmaCiv
     implementation fg.deobf("maven.modrinth:firmaciv:1.0.9");
