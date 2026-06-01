@@ -5,7 +5,9 @@ import net.minecraftforge.fml.ModList;
 public enum FirmaCivPlusModsResolver
 {
     ARBOR_FIRMA_CRAFT("afc"),
-    BENEATH("beneath");
+    BENEATH("beneath"),
+    TFG("tfg")
+    ;
 
     private final String name;
     private Boolean modLoaded;

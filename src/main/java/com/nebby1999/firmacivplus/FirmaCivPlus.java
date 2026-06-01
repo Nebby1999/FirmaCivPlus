@@ -1,6 +1,9 @@
 package com.nebby1999.firmacivplus;
 
 import com.mojang.logging.LogUtils;
+import com.nebby1999.firmacivplus.watercraftmaterials.AFCWatercraftMaterial;
+import com.nebby1999.firmacivplus.watercraftmaterials.BeneathWatercraftMaterial;
+import com.nebby1999.firmacivplus.watercraftmaterials.TFGWatercraftMaterial;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +34,11 @@ public class FirmaCivPlus
         {
             LOGGER.info("Enabling FirmaCiv+Beneath cross compat");
             WatercraftMaterial.addMaterials(BeneathWatercraftMaterial.values());
+        }
+        if(FirmaCivPlusModsResolver.TFG.isLoaded())
+        {
+            LOGGER.info("Enabling FirmaCiv+TFG cross compat");
+            WatercraftMaterial.addMaterials(TFGWatercraftMaterial.values());
         }
 
         FirmaCivPlusBlocks.init(bus);

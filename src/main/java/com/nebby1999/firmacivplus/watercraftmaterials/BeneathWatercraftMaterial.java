@@ -1,9 +1,12 @@
-package com.nebby1999.firmacivplus;
+package com.nebby1999.firmacivplus.watercraftmaterials;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.firmaciv.common.entity.vehicle.CanoeEntity;
-import com.therighthon.afc.common.blocks.AFCWood;
-import com.therighthon.afc.common.items.AFCItems;
+import com.eerussianguy.beneath.common.blocks.Stem;
+import com.eerussianguy.beneath.common.items.BeneathItems;
+import com.nebby1999.firmacivplus.FirmaCivPlusEntities;
+import com.nebby1999.firmacivplus.WatercraftMaterial;
 import net.dries007.tfc.common.blocks.wood.Wood;
 import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.world.entity.EntityType;
@@ -12,30 +15,21 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
 
-public enum AFCWatercraftMaterial implements WatercraftMaterial
+public enum BeneathWatercraftMaterial implements WatercraftMaterial
 {
     //softwoods, makes canoes
-    TUALANG(AFCWood.TUALANG, true),
-    CYPRESS(AFCWood.CYPRESS, true),
-    FIG(AFCWood.FIG, true),
-    //hardwoods, makes ships
-    BAOBAB(AFCWood.BAOBAB, false),
-    EUCALYPTUS(AFCWood.EUCALYPTUS, false),
-    MAHOGANY(AFCWood.MAHOGANY, false),
-    HEVEA(AFCWood.HEVEA,false),
-    TEAK(AFCWood.TEAK, false),
-    IRONWOOD(AFCWood.IRONWOOD, false),
-    IPE(AFCWood.IPE, false)
+    CRIMSON(Stem.CRIMSON, true),
+    WARPED(Stem.WARPED, false)
     ;
 
     public final boolean isSoftwood;
-    public final AFCWood wood;
+    public final Stem wood;
 
-    AFCWatercraftMaterial(AFCWood wood, boolean isSoftwood) { this.wood = wood; this.isSoftwood = isSoftwood; }
+    BeneathWatercraftMaterial(Stem wood, boolean isSoftwood) { this.wood = wood; this.isSoftwood = isSoftwood; }
     @Override
     public Item getRailing()
     {
-        return AFCItems.LUMBER.get(wood).get();
+        return BeneathItems.LUMBER.get(wood).get();
     }
 
     @Override
@@ -57,7 +51,7 @@ public enum AFCWatercraftMaterial implements WatercraftMaterial
     }
 
     @Override
-    public Optional<EntityType<? extends AbstractVehicle>> getEntityType(BoatType boatType)
+    public Optional<EntityType<? extends AbstractVehicle>> getEntityType(BoatMaterial.BoatType boatType)
     {
         return switch (boatType) {
             case ROWBOAT -> Optional.of(FirmaCivPlusEntities.getRowboats().get(this).get());
